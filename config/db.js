@@ -11,7 +11,7 @@ export const connectToDB = async () => {
     }
 
     //await mongoose.disconnect()
-    return
+    // return
 
     try {
         await mongoose.connect(process.env.MONGO_URI, {

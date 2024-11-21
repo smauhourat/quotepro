@@ -5,7 +5,7 @@ export const POST = async (request) => {
     const { description } = await request.json();
 
     try {
-        //await connectToDB();
+        await connectToDB();
         const newCreditRating = new CreditRating({ description });
 
         await newCreditRating.save();
