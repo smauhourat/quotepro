@@ -10,8 +10,18 @@ export const POST = async (request) => {
 
         await newCreditRating.save();
         return new Response(JSON.stringify(newCreditRating), { status: 201 })
-        //return new Response("probando", { status: 200 })
     } catch (error) {
         return new Response("Failed to create a new Credit Rating", { status: 500 });
+    }
+}
+
+export const GET = async (request) => {
+
+    try {
+        await connectToDB();
+        const creditRatings = await CreditRating.find({})
+        return new Response(JSON.stringify(prompts), { status: 200 })
+    } catch (error) {
+        return new Response("Failed to get a Credit Rating", { status: 500 });
     }
 }
