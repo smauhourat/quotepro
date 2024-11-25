@@ -20,7 +20,7 @@ export const GET = async (request) => {
     try {
         await connectToDB();
         const creditRatings = await CreditRating.find({})
-        return new Response(JSON.stringify(prompts), { status: 200 })
+        return new Response(JSON.stringify(creditRatings), { status: 200 })
     } catch (error) {
         return new Response("Failed to get a Credit Rating", { status: 500 });
     }
