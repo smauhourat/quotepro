@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import CreditRating from '@models/creditrating'
 import { connectToDB } from '@config/db';
+import { NotFoundError, ResponseOk } from '@lib/http-error'
+import { handleError } from '@lib/handlers/error'
 
 export const POST = async (request) => {
     const { description } = await request.json();
@@ -10,9 +12,11 @@ export const POST = async (request) => {
         const newCreditRating = new CreditRating({ description });
 
         await newCreditRating.save();
-        return NextResponse.json(newCreditRating, { status: 201 })
+
+        return NextResponse.json(ResponseOk(newCreditRating), { status: 201 })
     } catch (error) {
-        return new Response("Failed to create a new Credit Rating", { status: 500 });
+        console.log(error)
+        return handleError(error)
     }
 }
 
@@ -20,9 +24,11 @@ export const GET = async (request) => {
 
     try {
         await connectToDB();
-        const creditRatings = await CreditRating.find({})
-        return NextResponse.json(creditRatings, { status: 200 })
+        const creditRating = await CreditRating.find({})
+
+        return NextResponse.json(ResponseOk(creditRating), { status: 200 })
     } catch (error) {
-        return new Response("Failed to get a Credit Rating", { status: 500 });
+        console.log(error)
+        return handleError(error)
     }
 }
