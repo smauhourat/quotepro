@@ -11,7 +11,7 @@ export const GET = async (request, { params }) => {
   const { id } = await params
 
   try {
-    if (!id) throw new NotFoundError("CreditRating")
+    if (!id) throw new NotFoundError(RESOURCE)
 
     await connectToDB();
     const creditRating = await CreditRating.findById(id)
@@ -19,7 +19,7 @@ export const GET = async (request, { params }) => {
 
     return NextResponse.json(ResponseOk(creditRating), { status: 200 })
   } catch (error) {
-    console.log(error)
+    //console.log(error)
     return handleError(error)
   }
 }

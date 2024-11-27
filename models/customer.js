@@ -6,6 +6,34 @@ const CustomerSchema = new Schema({
         type: String,
         required: true
     },
+    creditRating: {
+        type: Schema.Types.ObjectId,
+        ref: 'creditratings'
+    },
+    minimumMarginPercentage: {
+        type: Number,
+    },
+    minimumMarginUSD: {
+        type: Number,
+    },
+    sellerCommission: {
+        type: Number,
+    },
+    observation: {
+        type: String
+    },
+    delayAverageDays: {
+        type: Number
+    },
+    contactName: {
+        type: String
+    },
+    contactPhone: {
+        type: String
+    },
+    contactEmail: {
+        type: String
+    },
     taxId: {
         type: String,
         required: true
