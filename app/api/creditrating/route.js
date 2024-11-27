@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import CreditRating from '@models/creditrating'
 import { connectToDB } from '@config/db';
-import { NotFoundError, ResponseOk } from '@lib/http-error'
+import { ResponseOk } from '@lib/http-error'
 import { handleError } from '@lib/handlers/error'
 
 export const POST = async (request) => {
