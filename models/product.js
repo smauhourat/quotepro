@@ -38,7 +38,7 @@ const ProductSchema = new Schema({
     waste: {
         type: Number,
     },
-    freighttype: {
+    freightType: {
         type: Schema.Types.ObjectId,
         ref: 'freighttypes'
     },
@@ -52,24 +52,21 @@ const ProductSchema = new Schema({
         type: Boolean,
         default: false
     },
-
-
-
-    delayAverageDays: {
-        type: Number
+    iibbTreatment: {
+        type: Schema.Types.ObjectId,
+        ref: 'iibbtreatments'
     },
-    contactName: {
-        type: String
+    inoutStorage: {
+        type: Boolean,
+        default: false
     },
-    contactPhone: {
-        type: String
+    active: {
+        type: Boolean,
+        default: true
     },
-    contactEmail: {
-        type: String
-    },
-    taxId: {
-        type: String,
-        required: true
+    productCost: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });
 
