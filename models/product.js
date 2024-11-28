@@ -38,12 +38,23 @@ const ProductSchema = new Schema({
     waste: {
         type: Number,
     },
-
-
-
-    observation: {
+    freighttype: {
+        type: Schema.Types.ObjectId,
+        ref: 'freighttypes'
+    },
+    observations: {
         type: String
     },
+    clientObservations: {
+        type: String
+    },
+    buyAndSelldirect: {
+        type: Boolean,
+        default: false
+    },
+
+
+
     delayAverageDays: {
         type: Number
     },
