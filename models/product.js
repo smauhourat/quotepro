@@ -10,15 +10,37 @@ const ProductSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'suppliers'
     },
+    brand: {
+        type: String
+    },
+    packaging: {
+        type: Schema.Types.ObjectId,
+        ref: 'packagings'
+    },
+    positionKilogram: {
+        type: Number,
+        required: true
+    },
+    fclKilogram: {
+        type: Number,
+        required: true
+    },
+    validityOfPrice: {
+        type: Date,
+        required: true
+    },
     minimumMarginPercentage: {
         type: Number,
     },
     minimumMarginUSD: {
         type: Number,
     },
-    sellerCommission: {
+    waste: {
         type: Number,
     },
+
+
+
     observation: {
         type: String
     },
