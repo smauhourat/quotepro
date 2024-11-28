@@ -6,10 +6,10 @@ const ProductSchema = new Schema({
         type: String,
         required: true
     },
-    // provider: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'providers'
-    // },
+    supplier: {
+        type: Schema.Types.ObjectId,
+        ref: 'suppliers'
+    },
     minimumMarginPercentage: {
         type: Number,
     },
@@ -38,7 +38,7 @@ const ProductSchema = new Schema({
         type: String,
         required: true
     }
-})
+}, { timestamps: true });
 
 const Product = models.Product || model('Product', ProductSchema);
 

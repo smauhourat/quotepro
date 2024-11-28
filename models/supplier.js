@@ -6,7 +6,7 @@ const SupplierSchema = new Schema({
         type: String,
         required: true
     },
-})
+}, { timestamps: true });
 
 const Supplier = models.Supplier || model('Supplier', SupplierSchema);
 

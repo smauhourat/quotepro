@@ -38,7 +38,7 @@ const CustomerSchema = new Schema({
         type: String,
         required: true
     }
-})
+}, { timestamps: true })
 
 const Customer = models.Customer || model('Customer', CustomerSchema);
 
