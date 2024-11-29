@@ -6,6 +6,9 @@ const QuoteSchema = new Schema({
         type: String,
         required: true
     },
+    userInitials: {
+        type: String
+    },
     customer: {
         type: Schema.Types.ObjectId,
         ref: 'customers'
@@ -94,8 +97,34 @@ const QuoteSchema = new Schema({
     //internalComments
     internalObservations: {
         type: String
+    },
+    paymentDeadline: {
+        type: Schema.Types.ObjectId,
+        ref: 'paymentdeadlines'
+    },
+    paymentDeadlineName: {
+        type: String,
+    },
+    paymentDeadlineMonths: {
+        type: Number,
+    },
+    //PaymentDeadlineCustomer
+    paymentDeadlineCustomerName: {
+        type: String,
+    },
+    price: {
+        type: Number
+    },
+    customerTotalCost: {
+        type: Number
+    },
+    typeExchange: {
+        type: Number
+    },
+    quoteDate: {
+        type: Date,
+        required: true
     }
-
 
 }, { timestamps: true });
 
