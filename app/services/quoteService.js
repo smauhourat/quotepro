@@ -2,35 +2,35 @@
 import Customer from '@models/customer'
 import Product from '@models/product'
 import PaymentDeadline from '@models/paymentdeadline'
-import { connectToDB } from '@config/db';
+import { connectToDB } from '@config/db'
 
 // Helper function to calculate total cost
 const calculateTotalCost = (quantity, fclKilogram, sellerCommission, additionalPercentage, additionalFixed) => {
-    const baseCost = quantity * fclKilogram;
-    const commissionCost = baseCost * (sellerCommission / 100);
-    const additionalCost = baseCost * (additionalPercentage / 100) + additionalFixed;
-    return baseCost + commissionCost + additionalCost;
-};
+    const baseCost = quantity * fclKilogram
+    const commissionCost = baseCost * (sellerCommission / 100)
+    const additionalCost = baseCost * (additionalPercentage / 100) + additionalFixed
+    return baseCost + commissionCost + additionalCost
+}
 
 // Function to calculate a quote without persisting it
 const calculateQuote = async (quoteData) => {
     try {
-        await connectToDB();
+        await connectToDB()
 
-        console.log(quoteData)
+        //console.log(quoteData)
         // Fetch related entities
-        const customer = await Customer.findById(quoteData.customer);
-        const product = await Product.findById(quoteData.product);
-        const paymentDeadline = await PaymentDeadline.findById(quoteData.paymentDeadline);
+        const customer = await Customer.findById(quoteData.customer)
+        const product = await Product.findById(quoteData.product)
+        const paymentDeadline = await PaymentDeadline.findById(quoteData.paymentDeadline)
 
         if (!customer) {
-            throw new Error('Related entities Customer not found');
+            throw new Error('Related entities Customer not found')
         }
         if (!product) {
-            throw new Error('Related entities Product not found');
+            throw new Error('Related entities Product not found')
         }
         if (!paymentDeadline) {
-            throw new Error('Related entities PaymentDeadline not found');
+            throw new Error('Related entities PaymentDeadline not found')
         }
 
         // Calculate total cost
@@ -40,11 +40,12 @@ const calculateQuote = async (quoteData) => {
             quoteData.sellerCommissionInput,
             quoteData.additionalPercentageInput,
             quoteData.additionalFixedInput
-        );
+        )
+
+        const calculatedPrice = totalCost * 1.15
 
         // Prepare the calculated quote details
         const calculatedQuote = {
-            code: quoteData.code,
             userInitials: quoteData.userInitials,
             customer: customer._id,
             customerName: customer.name,
@@ -74,16 +75,26 @@ const calculateQuote = async (quoteData) => {
             userObservations: quoteData.userObservations,
             internalObservations: quoteData.internalObservations,
             paymentDeadlineCustomerName: quoteData.paymentDeadlineCustomerName,
-            price: quoteData.price,
+            price: calculatedPrice,
             typeExchange: quoteData.typeExchange,
             quoteDate: quoteData.quoteDate || new Date()
-        };
+        }
 
-        return calculatedQuote;
+        return calculatedQuote
     } catch (error) {
-        console.error('Error calculating quote:', error);
-        throw error;
+        console.error('Error calculating quote:', error)
+        throw error
     }
-};
+}
 
-export { calculateQuote };
+const createQuote = async (quoteData) => {
+
+    // 1. Calculate Quote on the fly
+    let calculatedQuote = await calculateQuote(quoteData)
+    // 2. Create Quote in DB
+    calculatedQuote.code = 'COT-EXP-2024118-AVM'
+    // 3. Retun Created Quote
+    return calculatedQuote
+}
+
+export { calculateQuote, createQuote }
