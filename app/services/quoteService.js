@@ -2,6 +2,12 @@
 import Customer from '@models/customer'
 import Product from '@models/product'
 import PaymentDeadline from '@models/paymentdeadline'
+import Supplier from '@models/supplier'
+import Packaging from '@models/packaging'
+import Freighttype from '@models/freighttype'
+import IIBBTreatment from '@models/iibbtreatment'
+
+import Quote from '@models/quote'
 import { connectToDB } from '@config/db'
 
 // Helper function to calculate total cost
@@ -21,6 +27,10 @@ const calculateQuote = async (quoteData) => {
         // Fetch related entities
         const customer = await Customer.findById(quoteData.customer)
         const product = await Product.findById(quoteData.product)
+            .populate('supplier')
+        //.populate('packaging')
+        //.populate('freighttype')
+        //.populate('iibbtreatments')
         const paymentDeadline = await PaymentDeadline.findById(quoteData.paymentDeadline)
 
         if (!customer) {
@@ -32,6 +42,8 @@ const calculateQuote = async (quoteData) => {
         if (!paymentDeadline) {
             throw new Error('Related entities PaymentDeadline not found')
         }
+
+        console.log('product =>', product)
 
         // Calculate total cost
         const totalCost = calculateTotalCost(
@@ -91,10 +103,14 @@ const createQuote = async (quoteData) => {
 
     // 1. Calculate Quote on the fly
     let calculatedQuote = await calculateQuote(quoteData)
+
     // 2. Create Quote in DB
     calculatedQuote.code = 'COT-EXP-2024118-AVM'
+    const quote = Quote(calculatedQuote)
+    await quote.save()
+
     // 3. Retun Created Quote
-    return calculatedQuote
+    return quote
 }
 
 export { calculateQuote, createQuote }
