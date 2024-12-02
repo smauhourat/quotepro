@@ -63,7 +63,10 @@ export const GET = async (request) => {
     try {
         await connectToDB();
         const product = await Product.find({})
-
+            .populate("supplier")
+            .populate("packaging")
+            .populate("iibbTreatment")
+            .populate("freightType")
         return NextResponse.json(ResponseOk(product), { status: 200 })
     } catch (error) {
         console.log(error)

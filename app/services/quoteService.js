@@ -28,9 +28,9 @@ const calculateQuote = async (quoteData) => {
         const customer = await Customer.findById(quoteData.customer)
         const product = await Product.findById(quoteData.product)
             .populate('supplier')
-        //.populate('packaging')
-        //.populate('freighttype')
-        //.populate('iibbtreatments')
+            .populate('packaging')
+            .populate('freightType')
+            .populate('iibbTreatment')
         const paymentDeadline = await PaymentDeadline.findById(quoteData.paymentDeadline)
 
         if (!customer) {
@@ -45,7 +45,7 @@ const calculateQuote = async (quoteData) => {
 
         console.log('product =>', product)
 
-        // Calculate total cost
+        // // Calculate total cost
         const totalCost = calculateTotalCost(
             quoteData.quantityQuote,
             product.fclKilogram,

@@ -15,7 +15,7 @@ const ProductSchema = new Schema({
     },
     packaging: {
         type: Schema.Types.ObjectId,
-        ref: 'packaging'
+        ref: 'Packaging'
     },
     positionKilogram: {
         type: Number,
@@ -40,7 +40,7 @@ const ProductSchema = new Schema({
     },
     freightType: {
         type: Schema.Types.ObjectId,
-        ref: 'freighttype'
+        ref: 'FreightType'
     },
     observations: {
         type: String
@@ -54,7 +54,7 @@ const ProductSchema = new Schema({
     },
     iibbTreatment: {
         type: Schema.Types.ObjectId,
-        ref: 'iibbtreatment'
+        ref: 'IIBBTreatment'
     },
     inoutStorage: {
         type: Boolean,

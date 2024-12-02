@@ -10,7 +10,7 @@ export const connectToDB = async () => {
         return;
     }
 
-    //await mongoose.disconnect()
+    // await mongoose.disconnect()
     // return
 
     try {

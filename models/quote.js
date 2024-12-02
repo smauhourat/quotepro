@@ -27,7 +27,7 @@ const QuoteSchema = new Schema({
     },
     product: {
         type: Schema.Types.ObjectId,
-        ref: 'products'
+        ref: 'product'
     },
     productName: {
         type: String,

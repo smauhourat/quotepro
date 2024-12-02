@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server"
 import Product from '@models/product'
+import Packaging from '@models/packaging'
+import IIBBTreatment from '@models/iibbtreatment'
+import FreightType from '@models/freighttype'
+
 import { connectToDB } from '@config/db'
 import { NotFoundError, ResponseOk } from '@lib/http-error'
 import { handleError } from '@lib/handlers/error'
@@ -15,6 +19,10 @@ export const GET = async (request, { params }) => {
 
         await connectToDB();
         const product = await Product.findById(id)
+            .populate("supplier")
+            .populate("packaging")
+            .populate("iibbTreatment")
+            .populate("freightType")
         if (!product) throw new NotFoundError(RESOURCE)
 
         return NextResponse.json(ResponseOk(product), { status: 200 })
