@@ -21,10 +21,24 @@ const calculateTotalCost = (quantity, fclKilogram, sellerCommission, additionalP
 // Define the ViewModel and validation schema using Joi
 const quoteInputViewModelSchema = Joi.object({
     userInitials: Joi.string().required(),
-    customerId: Joi.string().required(),
-    productId: Joi.string().required(),
-    paymentDeadlineId: Joi.string().required(),
-    quantityQuote: Joi.number().required().positive(),
+    customerId: Joi.string().required().messages({
+        "string.empty": "Debe ingresar un Cliente",
+        "any.required": "Debe ingresar un Cliente",
+    }),
+    productId: Joi.string().required().messages({
+        "string.empty": "Debe ingresar un Producto",
+        "any.required": "Debe ingresar un Producto",
+    }),
+    paymentDeadlineId: Joi.string().required().messages({
+        "string.empty": "Debe ingresar una Condicion de Pago",
+        "any.required": "Debe ingresar una Condicion de Pago",
+    }),
+    quantityQuote: Joi.number().required().positive().messages({
+        "string.empty": "Debe ingresar una Condicion de Pago",
+        "any.required": "Debe ingresar una Condicion de Pago",
+        "number.base": "Debe ingresar un valor numerico",
+        "number.positive": "Debe ingresar un valor numerico positivo"
+    }),
     stockTime: Joi.number().default(0),
     deliveryAddressInput: Joi.string().allow('').optional(),
     deliveryDateInput: Joi.string().isoDate().allow('').optional(),
@@ -46,7 +60,8 @@ const calculateQuote = async (quoteInputData) => {
         // Validate the view model
         const { error, value } = quoteInputViewModelSchema.validate(quoteInputData);
         if (error) {
-            throw new Error(`Validation error: ${error.details.map(d => d.message).join(', ')}`);
+            console.log('error =>', error)
+            throw new Error(`Error de validación: ${error.details.map(d => d.message).join(', ')}`);
         }
 
         console.log(value);
