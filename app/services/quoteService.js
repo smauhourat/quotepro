@@ -6,8 +6,8 @@ import Supplier from '@models/supplier'
 import Packaging from '@models/packaging'
 import Freighttype from '@models/freighttype'
 import IIBBTreatment from '@models/iibbtreatment'
-
 import Quote from '@models/quote'
+import Joi from 'joi'
 import { connectToDB } from '@config/db'
 
 // Helper function to calculate total cost
@@ -18,20 +18,48 @@ const calculateTotalCost = (quantity, fclKilogram, sellerCommission, additionalP
     return baseCost + commissionCost + additionalCost
 }
 
+// Define the ViewModel and validation schema using Joi
+const quoteInputViewModelSchema = Joi.object({
+    userInitials: Joi.string().required(),
+    customerId: Joi.string().required(),
+    productId: Joi.string().required(),
+    paymentDeadlineId: Joi.string().required(),
+    quantityQuote: Joi.number().required().positive(),
+    stockTime: Joi.number().default(0),
+    deliveryAddressInput: Joi.string().allow('').optional(),
+    deliveryDateInput: Joi.string().isoDate().allow('').optional(),
+    availabilityDaysInput: Joi.number().allow(null).optional(),
+    sellerCommissionInput: Joi.number().required().min(0),
+    additionalPercentageInput: Joi.number().required().min(0),
+    additionalFixedInput: Joi.number().required().min(0),
+    userObservations: Joi.string().allow('').optional(),
+    internalObservations: Joi.string().allow('').optional(),
+    paymentDeadlineCustomerName: Joi.string().allow('').optional(),
+    typeExchange: Joi.number().required().min(0)
+});
+
 // Function to calculate a quote without persisting it
-const calculateQuote = async (quoteData) => {
+const calculateQuote = async (quoteInputData) => {
     try {
         await connectToDB()
 
+        // Validate the view model
+        const { error, value } = quoteInputViewModelSchema.validate(quoteInputData);
+        if (error) {
+            throw new Error(`Validation error: ${error.details.map(d => d.message).join(', ')}`);
+        }
+
+        console.log(value);
+
         //console.log(quoteData)
         // Fetch related entities
-        const customer = await Customer.findById(quoteData.customer)
-        const product = await Product.findById(quoteData.product)
+        const customer = await Customer.findById(value.customerId)
+        const product = await Product.findById(value.productId)
             .populate('supplier')
             .populate('packaging')
             .populate('freightType')
             .populate('iibbTreatment')
-        const paymentDeadline = await PaymentDeadline.findById(quoteData.paymentDeadline)
+        const paymentDeadline = await PaymentDeadline.findById(value.paymentDeadlineId)
 
         if (!customer) {
             throw new Error('Related entities Customer not found')
@@ -47,18 +75,18 @@ const calculateQuote = async (quoteData) => {
 
         // // Calculate total cost
         const totalCost = calculateTotalCost(
-            quoteData.quantityQuote,
+            value.quantityQuote,
             product.fclKilogram,
-            quoteData.sellerCommissionInput,
-            quoteData.additionalPercentageInput,
-            quoteData.additionalFixedInput
+            value.sellerCommissionInput,
+            value.additionalPercentageInput,
+            value.additionalFixedInput
         )
 
         const calculatedPrice = totalCost * 1.15
 
         // Prepare the calculated quote details
         const calculatedQuote = {
-            userInitials: quoteData.userInitials,
+            userInitials: value.userInitials,
             customer: customer._id,
             customerName: customer.name,
             customerContactName: customer.contactName,
@@ -66,30 +94,30 @@ const calculateQuote = async (quoteData) => {
             customerCompany: customer.company,
             product: product._id,
             productName: product.name,
-            productSupplierName: product.supplierName,
-            productBrandName: product.brandName,
+            productSupplierName: product.supplier.name,
+            productBrandName: product.brand,
             productFCLKilomgram: product.fclKilogram,
-            productPackagingName: product.packagingName,
+            productPackagingName: product.packaging.description,
             productValidityOfPrice: product.validityOfPrice,
             productWaste: product.waste,
-            quantityQuote: quoteData.quantityQuote,
-            stockTime: quoteData.stockTime || 0,
-            deliveryAddressInput: quoteData.deliveryAddressInput,
-            deliveryDateInput: quoteData.deliveryDateInput,
-            availabilityDaysInput: quoteData.availabilityDaysInput,
-            sellerCommissionInput: quoteData.sellerCommissionInput,
-            additionalPercentageInput: quoteData.additionalPercentageInput,
-            additionalFixedInput: quoteData.additionalFixedInput,
+            quantityQuote: value.quantityQuote,
+            stockTime: value.stockTime || 0,
+            deliveryAddressInput: value.deliveryAddressInput,
+            deliveryDateInput: value.deliveryDateInput,
+            availabilityDaysInput: value.availabilityDaysInput,
+            sellerCommissionInput: value.sellerCommissionInput,
+            additionalPercentageInput: value.additionalPercentageInput,
+            additionalFixedInput: value.additionalFixedInput,
             paymentDeadline: paymentDeadline._id,
-            paymentDeadlineName: paymentDeadline.name,
+            paymentDeadlineName: paymentDeadline.description,
             paymentDeadlineMonths: paymentDeadline.months,
             customerTotalCost: totalCost,
-            userObservations: quoteData.userObservations,
-            internalObservations: quoteData.internalObservations,
-            paymentDeadlineCustomerName: quoteData.paymentDeadlineCustomerName,
+            userObservations: value.userObservations,
+            internalObservations: value.internalObservations,
+            paymentDeadlineCustomerName: value.paymentDeadlineCustomerName,
             price: calculatedPrice,
-            typeExchange: quoteData.typeExchange,
-            quoteDate: quoteData.quoteDate || new Date()
+            typeExchange: value.typeExchange,
+            quoteDate: value.quoteDate || new Date()
         }
 
         return calculatedQuote
